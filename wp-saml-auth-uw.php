@@ -56,7 +56,7 @@ function wpsax_filter_option( $value, $option_name ) {
                 ),
                 // Required: Contents of the IDP's public x509 certificate.
                 // Use file_get_contents() to load certificate contents into scope.
-                'x509cert' => file_get_contents(ABSPATH . '/private/uw-idp-md-cert.pem'),
+                'x509cert' => file_get_contents(ABSPATH . 'private/uw-idp-md-cert.pem'),
                 // Optional: Instead of using the x509 cert, you can specify the fingerprint and algorithm.
                 'certFingerprint' => '',
                 'certFingerprintAlgorithm' => '',
@@ -165,18 +165,29 @@ add_action( 'login_form', function() {
 
 
 /*
+ * reduce the site down to a single part, removing prefixes etc
+ */
+function site_slug() {
+    $domain = parse_url(site_url(), PHP_URL_HOST);
+
+    $parts = explode('.', $domain);
+    $site = array_shift($parts);
+    while (preg_match('/^(dev|test)$/', $site)) {
+        $site = array_shift($parts);
+    }
+
+    if (preg_match('/^\w+-(\w+)-asa-uw$/', $site, $matches)) {
+        $site = $matches[1];
+    }
+
+    return $site;
+}
+
+/*
  * Return an associative array of groups, indexed by role
  */
 function site_role_groups() {
-    $domain = parse_url(site_url(), PHP_URL_HOST);
-
-    /**
-     * reduce the hostname down to just the first section, after removing prefixes like "dev." or "test."
-     */
-    $site = preg_replace('/^((dev|test)\.)/', '', $domain);
-    $site = preg_replace('/\..*/', '', $site);
-
-    $site_stem = WP_SAML_AUTH_UW_GROUP_STEM.'_'.$site;
+    $site_stem = WP_SAML_AUTH_UW_GROUP_STEM.'_'.site_slug();
 
     $role_map = array();
     foreach (wp_roles()->role_names as $role => $name) {
