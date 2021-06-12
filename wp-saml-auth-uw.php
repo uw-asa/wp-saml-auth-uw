@@ -143,7 +143,7 @@ function site_role_groups() {
 
     $role_map = array();
     foreach (wp_roles()->role_names as $role => $name) {
-        $role_map[$role] = $site_stem.'_'.$role;
+        $role_map[$role] = $site_stem.'_'.str_replace('_', '-', $role);
     }
     return $role_map;
 }
@@ -205,7 +205,7 @@ add_action( 'network_admin_menu', function() {
 <?php endforeach; ?>
                 </table>
                 <h2>Role Mapping</h2>
-                <p>Roles will be granted based on membership in these UW Groups:</p>
+                <p>Roles are granted or revoked upon login, according to membership in these UW Groups:</p>
                 <table class="form-table" role="presentation">
                     <tr><th scope="row">Super Admin</th>
                     <td><input readonly="readonly" type="text" class="regular-text" value="<?= super_admin_group() ?>" /></td></tr>
