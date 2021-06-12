@@ -32,14 +32,14 @@ function wpsax_filter_option( $value, $option_name ) {
             'debug'        => defined( 'WP_DEBUG' ) && WP_DEBUG ? true : false,
             'baseurl'      => home_url(),
             'sp'           => array(
-                'entityId' => network_site_url('sp'),
+                'entityId' => network_entityid(),
                 'assertionConsumerService' => array(
                     'url'  => site_url('wp-login.php'),
                     'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
                 ),
-                // 'x509cert' => file_get_contents(ABSPATH . '/private/sp.crt'),
-                // 'privateKey' => file_get_contents(ABSPATH . '/private/sp.key'),
-                // 'x509certNew' => file_get_contents(ABSPATH . '/private/sp-new.crt'),
+                'x509cert' => file_get_contents(ABSPATH . 'private/sp.crt'),
+                'privateKey' => file_get_contents(ABSPATH . 'private/sp.key'),
+                // 'x509certNew' => file_get_contents(ABSPATH . 'private/sp-new.crt'),
             ),
             'idp'          => array(
                 // Required: Set based on provider's supplied value.
@@ -158,6 +158,18 @@ add_action( 'login_form', function() {
     }
 });
 
+/**
+ * generate a network-wide entityId
+ */
+function network_entityid() {
+    $entityid = network_site_url('sp');
+
+    /* if this is something other than dev, test, or live, just use the dev entityId. */
+    $entityid = preg_replace('/^https:\/\/(?!(?:dev|test|live)-).+-(\w+-asa-uw.*)$/', 'https://dev-$1', $entityid);
+    $entityid = preg_replace('/^https:\/\/(?!(?:dev|test|live)\.).+\.(\w+\.asa\.uw\.edu.*)$/', 'https://dev.$1', $entityid);
+
+    return $entityid;
+}
 
 /*
  * reduce the site down to a single part, removing prefixes etc
