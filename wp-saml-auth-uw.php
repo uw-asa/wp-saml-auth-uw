@@ -9,23 +9,9 @@ define('WP_SAML_AUTH_UW_GROUP_STEM', 'uw_asa_it_web');
 
 function wpsax_filter_option( $value, $option_name ) {
     $defaults = array(
-        /**
-         * Type of SAML connection bridge to use.
-         *
-         * 'internal' uses OneLogin bundled library; 'simplesamlphp' uses SimpleSAMLphp.
-         *
-         * Defaults to SimpleSAMLphp for backwards compatibility.
-         *
-         * @param string
-         */
+        // Use the OneLogin bundled library
         'connection_type' => 'internal',
-        /**
-         * Configuration options for OneLogin library use.
-         *
-         * See comments with "Required:" for values you absolutely need to configure.
-         *
-         * @param array
-         */
+        // Configuration options for OneLogin library use.
         'internal_config'        => array(
             // Validation of SAML responses is required.
             'strict'       => true,
@@ -62,66 +48,24 @@ function wpsax_filter_option( $value, $option_name ) {
                 'certFingerprintAlgorithm' => '',
             ),
         ),
-        /**
-         * Whether or not to automatically provision new WordPress users.
-         *
-         * When WordPress is presented with a SAML user without a
-         * corresponding WordPress account, it can either create a new user
-         * or display an error that the user needs to contact the site
-         * administrator.
-         *
-         * @param bool
-         */
+        // Automatically provision users
         'auto_provision'         => true,
-        /**
-         * Whether or not to permit logging in with username and password.
-         *
-         * If this feature is disabled, all authentication requests will be
-         * channeled through SimpleSAMLphp.
-         *
-         * @param bool
-         */
+        // Only show login form if parameter is set
         'permit_wp_login'        => ($_GET['saml_sso'] === 'false' ||
                                      $_POST['saml_sso'] === 'false' ? true : false),
-        /**
-         * Attribute by which to get a WordPress user for a SAML user.
-         *
-         * @param string Supported options are 'email' and 'login'.
-         */
+        // Map users by login
         'get_user_by'            => 'login',
-        /**
-         * SAML attribute which includes the user_login value for a user.
-         *
-         * @param string
-         */
-        'user_login_attribute'   => 'urn:oid:0.9.2342.19200300.100.1.1', // 'uid', 'uwNetID'
-        /**
-         * SAML attribute which includes the user_email value for a user.
-         *
-         * @param string
-         */
-        'user_email_attribute'   => 'urn:oid:0.9.2342.19200300.100.1.3', // 'mail', 'email'
-        /**
-         * SAML attribute which includes the display_name value for a user.
-         *
-         * @param string
-         */
-        'display_name_attribute' => 'urn:oid:2.5.4.3', // 'cn'
-        /**
-         * SAML attribute which includes the first_name value for a user.
-         *
-         * @param string
-         */
-        'first_name_attribute' => 'urn:oid:2.5.4.42', // 'givenName'
-        /**
-         * SAML attribute which includes the last_name value for a user.
-         *
-         * @param string
-         */
-        'last_name_attribute' => 'urn:oid:2.5.4.4', // 'surname'
-        /**
-         * No default role. Will be added after creation
-         */
+        // aka 'uid', aka 'uwNetID'
+        'user_login_attribute'   => 'urn:oid:0.9.2342.19200300.100.1.1',
+        // aka 'mail', aka 'email'
+        'user_email_attribute'   => 'urn:oid:0.9.2342.19200300.100.1.3',
+        // aka 'cn'
+        'display_name_attribute' => 'urn:oid:2.5.4.3',
+        // aka 'givenName'
+        'first_name_attribute'   => 'urn:oid:2.5.4.42',
+        // aka 'surname'
+        'last_name_attribute'    => 'urn:oid:2.5.4.4',
+        // No default role. Will be added after creation
         'default_role'           => '',
     );
     $value = isset( $defaults[ $option_name ] ) ? $defaults[ $option_name ] : $value;
