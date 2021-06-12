@@ -141,11 +141,9 @@ function wpsax_filter_option( $value, $option_name ) {
          */
         'last_name_attribute' => 'urn:oid:2.5.4.4', // 'surname'
         /**
-         * Default WordPress role to grant when provisioning new users.
-         *
-         * @param string
+         * No default role. Will be added after creation
          */
-        'default_role'           => get_option( 'default_role' ),
+        'default_role'           => '',
     );
     $value = isset( $defaults[ $option_name ] ) ? $defaults[ $option_name ] : $value;
     return $value;
@@ -157,6 +155,15 @@ add_action( 'login_form', function() {
         ?><input type="hidden" name="saml_sso" value="false" /><?php
     }
 });
+
+/**
+ * Don't let admins try to assign roles
+ */
+function promote_users_cap_filter( $allcaps, $cap, $args ) {
+    unset($allcaps['promote_users']);
+    return $allcaps;
+}
+add_filter( 'user_has_cap', 'promote_users_cap_filter', 10, 3 );
 
 /**
  * generate a network-wide entityId
@@ -287,9 +294,10 @@ add_action( 'network_admin_menu', function() {
 });
 
 add_action( 'admin_menu', function() {
-    add_options_page(
-        __( 'WP SAML Auth UW Settings', 'wp-saml-auth-uw' ),
-        __( 'WP SAML Auth UW', 'wp-saml-auth-uw' ),
+    add_submenu_page(
+        'users.php',
+        __( 'UW User Roles', 'wp-saml-auth-uw' ),
+        __( 'UW User Roles', 'wp-saml-auth-uw' ),
         'manage_options',
         'wp-saml-auth-uw-settings',
         function() {
@@ -297,9 +305,9 @@ add_action( 'admin_menu', function() {
             $groups = site_role_groups();
             ?>
             <div class="wrap">
-                <h2><?php esc_html_e( 'WP SAML Auth UW Settings', 'wp-saml-auth-uw' ); ?></h2>
+                <h2><?php esc_html_e( 'UW Groups Required for User Roles', 'wp-saml-auth-uw' ); ?></h2>
                 <h2>Role Mapping</h2>
-                <p>Roles will be granted based on membership in these UW Groups:</p>
+                <p>Roles are granted or revoked upon login, according to membership in these UW Groups:</p>
                 <table class="form-table" role="presentation">
 <?php foreach (wp_roles()->get_names() as $role => $name): ?>
                     <tr><th scope="row"><?= $name ?></th>
