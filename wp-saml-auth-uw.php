@@ -224,6 +224,37 @@ function add_user_roles( $user, $attributes ) {
 add_action( 'wp_saml_auth_existing_user_authenticated', 'add_user_roles', 10, 2);
 add_action( 'wp_saml_auth_new_user_authenticated', 'add_user_roles', 10, 2);
 
+add_action( 'network_admin_menu', function() {
+    add_submenu_page(
+        'settings.php',
+        __( 'WP SAML Auth UW Settings', 'wp-saml-auth-uw' ),
+        __( 'WP SAML Auth UW', 'wp-saml-auth-uw' ),
+        'manage_options',
+        'wp-saml-auth-uw-settings',
+        function() {
+            $config = apply_filters( 'wp_saml_auth_option', null, 'internal_config' );
+            $groups = site_role_groups();
+            ?>
+            <div class="wrap">
+                <h2><?php esc_html_e( 'WP SAML Auth UW Settings', 'wp-saml-auth-uw' ); ?></h2>
+                <h2>Service Provider Settings</h2>
+                <p>Ensure this metadata is present in the UW Service Provider Registry:</p>
+                <table class="form-table" role="presentation">
+                    <tr><th scope="row">Entity Id</th>
+                        <td><input readonly="readonly" type="text" class="regular-text" value="<?= $config['sp']['entityId'] ?>" /></td></tr>
+                </table>
+                <h2>Role Mapping</h2>
+                <p>Roles will be granted based on membership in these UW Groups:</p>
+                <table class="form-table" role="presentation">
+                    <tr><th scope="row">Super Admin</th>
+                    <td><input readonly="readonly" type="text" class="regular-text" value="<?= super_admin_group() ?>" /></td></tr>
+                </table>
+            </div>
+            <?php
+        }
+    );
+});
+
 add_action( 'admin_menu', function() {
     add_options_page(
         __( 'WP SAML Auth UW Settings', 'wp-saml-auth-uw' ),
@@ -247,8 +278,6 @@ add_action( 'admin_menu', function() {
                 <h2>Role Mapping</h2>
                 <p>Roles will be granted based on membership in these UW Groups:</p>
                 <table class="form-table" role="presentation">
-                    <tr><th scope="row">Super Admin</th>
-                    <td><input readonly="readonly" type="text" class="regular-text" value="<?= super_admin_group() ?>" /></td></tr>
 <?php foreach (wp_roles()->get_names() as $role => $name): ?>
                     <tr><th scope="row"><?= $name ?></th>
                     <td><input readonly="readonly" type="text" class="regular-text" value="<?= $groups[$role] ?>" /></td></tr>
