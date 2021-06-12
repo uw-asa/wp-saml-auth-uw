@@ -102,7 +102,8 @@ function wpsax_filter_option( $value, $option_name ) {
          *
          * @param bool
          */
-        'permit_wp_login'        => ($_GET['saml_sso'] === 'false' ? true : false),
+        'permit_wp_login'        => ($_GET['saml_sso'] === 'false' ||
+                                     $_POST['saml_sso'] === 'false' ? true : false),
         /**
          * Attribute by which to get a WordPress user for a SAML user.
          *
@@ -151,15 +152,9 @@ function wpsax_filter_option( $value, $option_name ) {
 }
 add_filter( 'wp_saml_auth_option', 'wpsax_filter_option', 10, 2 );
 
-function custom_query_vars_filter($vars) {
-    $vars[] .= 'saml_sso';
-    return $vars;
-}
-add_filter( 'query_vars', 'custom_query_vars_filter' );
-
 add_action( 'login_form', function() {
-    if (get_query_var('saml_sso')) {
-        ?><input type="text" name="saml_sso" value="false" /><?php
+    if ( $_GET['saml_sso'] === 'false' || $_POST['saml_sso'] === 'false' ) {
+        ?><input type="hidden" name="saml_sso" value="false" /><?php
     }
 });
 
