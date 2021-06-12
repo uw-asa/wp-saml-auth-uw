@@ -34,7 +34,7 @@ function wpsax_filter_option( $value, $option_name ) {
             'sp'           => array(
                 'entityId' => network_entityid(),
                 'assertionConsumerService' => array(
-                    'url'  => site_url('wp-login.php'),
+                    'url'  => site_acs_url(),
                     'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
                 ),
                 'x509cert' => file_get_contents(ABSPATH . 'private/sp.crt'),
@@ -171,7 +171,22 @@ function network_entityid() {
     return $entityid;
 }
 
-/*
+/**
+ * generate the site's ACS URL
+ */
+function site_acs_url($site = null) {
+    if ($site) {
+        switch_to_blog($site);
+    }
+    $acs_url = site_url('wp-login.php');
+    if ($site) {
+        restore_current_blog();
+    }
+
+    return $acs_url;
+}
+
+/**
  * reduce the site down to a single part, removing prefixes etc
  */
 function site_slug() {
@@ -190,7 +205,7 @@ function site_slug() {
     return $site;
 }
 
-/*
+/**
  * Return an associative array of groups, indexed by role
  */
 function site_role_groups() {
@@ -203,14 +218,14 @@ function site_role_groups() {
     return $role_map;
 }
 
-/*
+/**
  * Return the super admin group
  */
 function super_admin_group() {
     return WP_SAML_AUTH_UW_GROUP_STEM.'_admin';
 }
 
-/*
+/**
  * Add user to roles according to the groups given in attributes
  */
 function add_user_roles( $user, $attributes ) {
@@ -254,6 +269,10 @@ add_action( 'network_admin_menu', function() {
                 <table class="form-table" role="presentation">
                     <tr><th scope="row">Entity Id</th>
                         <td><input readonly="readonly" type="text" class="regular-text" value="<?= $config['sp']['entityId'] ?>" /></td></tr>
+<?php foreach (get_sites('fields=ids') as $site_id): ?>
+                    <tr><th scope="row">Assertion Consumer Service URL</th>
+                        <td><input readonly="readonly" type="text" class="regular-text" value="<?= site_acs_url($site_id) ?>" /></td></tr>
+<?php endforeach; ?>
                 </table>
                 <h2>Role Mapping</h2>
                 <p>Roles will be granted based on membership in these UW Groups:</p>
@@ -279,14 +298,6 @@ add_action( 'admin_menu', function() {
             ?>
             <div class="wrap">
                 <h2><?php esc_html_e( 'WP SAML Auth UW Settings', 'wp-saml-auth-uw' ); ?></h2>
-                <h2>Service Provider Settings</h2>
-                <p>Ensure this metadata is present in the UW Service Provider Registry:</p>
-                <table class="form-table" role="presentation">
-                    <tr><th scope="row">Entity Id</th>
-                        <td><input readonly="readonly" type="text" class="regular-text" value="<?= $config['sp']['entityId'] ?>" /></td></tr>
-                    <tr><th scope="row">Assertion Consumer Service URL</th>
-                        <td><input readonly="readonly" type="text" class="regular-text" value="<?= $config['sp']['assertionConsumerService']['url'] ?>" /></td></tr>
-                </table>
                 <h2>Role Mapping</h2>
                 <p>Roles will be granted based on membership in these UW Groups:</p>
                 <table class="form-table" role="presentation">
