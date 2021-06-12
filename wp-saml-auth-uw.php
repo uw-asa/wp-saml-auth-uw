@@ -63,27 +63,6 @@ function wpsax_filter_option( $value, $option_name ) {
             ),
         ),
         /**
-         * Path to SimpleSAMLphp autoloader.
-         *
-         * Follow the standard implementation by installing SimpleSAMLphp
-         * alongside the plugin, and provide the path to its autoloader.
-         * Alternatively, this plugin will work if it can find the
-         * `SimpleSAML_Auth_Simple` class.
-         *
-         * @param string
-         */
-        'simplesamlphp_autoload' => dirname( __FILE__ ) . '/simplesamlphp/lib/_autoload.php',
-        /**
-         * Authentication source to pass to SimpleSAMLphp
-         *
-         * This must be one of your configured identity providers in
-         * SimpleSAMLphp. If the identity provider isn't configured
-         * properly, the plugin will not work properly.
-         *
-         * @param string
-         */
-        'auth_source'            => 'default-sp',
-        /**
          * Whether or not to automatically provision new WordPress users.
          *
          * When WordPress is presented with a SAML user without a
