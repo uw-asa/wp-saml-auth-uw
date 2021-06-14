@@ -1,7 +1,13 @@
 <?php
 /**
  * Plugin Name: WP SAML Auth for UW
- * Version: 0.0.0
+ * Version: 1.0.0
+ * Description: Autoconfiguration of Pantheon's wp-saml-auth plugin for use at the University of Washington
+ * Author: Bradley Bell <bradleyb@uw.edu>
+ * Author URI: https://www.washington.edu/asa/
+ * Plugin URI: https://github.com/uw-asa/wp-saml-auth-uw
+ * Text Domain: wp-saml-auth-uw
+ * Domain Path: /languages
  *
  */
 
