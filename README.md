@@ -12,6 +12,8 @@ Generate a private key and certificate pair with:
 See _Network Admin->Settings->WP SAML Auth UW_ for your EntityID and corresponding ACS URLs. 
 Add this info, and your certificate, to the Service Provider Registry.
 
+Required attributes include: uwNetID, email, cn, and gws_groups covering the group stems necessary for user roles.
+
 ## User Roles
 See _Network Admin->Settings->WP SAML Auth UW_ for the UW group corresponding to the network's Super Admins.
 For each subsite, see _Users->UW User Roles_ for the UW groups corresponding to that site, one for each role.
