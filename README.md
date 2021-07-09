@@ -18,3 +18,6 @@ Required attributes include: uwNetID, email, cn, and gws_groups covering the gro
 See _Network Admin->Settings->WP SAML Auth UW_ for the UW group corresponding to the network's Super Admins.
 For each subsite, see _Users->UW User Roles_ for the UW groups corresponding to that site, one for each role.
 You probably want to give each site's admins the ability to manage all the groups in that stem.
+
+It is possible that this plugin's sitename detection code will fail, and thus generate nonsensical or conflicting UW Group names.
+If that happens, file a bug and we'll try to fix it asap.
