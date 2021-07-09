@@ -231,6 +231,7 @@ add_action( 'admin_menu', function() {
         'wp-saml-auth-uw-settings',
         function() {
             $config = apply_filters( 'wp_saml_auth_option', null, 'internal_config' );
+            $site_stem = WP_SAML_AUTH_UW_GROUP_STEM.'_'.site_slug();
             $groups = site_role_groups();
             ?>
             <div class="wrap">
@@ -240,9 +241,11 @@ add_action( 'admin_menu', function() {
                 <table class="form-table" role="presentation">
 <?php foreach (wp_roles()->get_names() as $role => $name): ?>
                     <tr><th scope="row"><?= $name ?></th>
-                    <td><input readonly="readonly" type="text" class="regular-text" value="<?= $groups[$role] ?>" /></td></tr>
+                    <td><a href="https://groups.uw.edu/group/<?= $groups[$role] ?>"><?= $groups[$role] ?></a></td>
+                    <td></td></tr>
 <?php endforeach; ?>
                 </table>
+                <a href="https://groups.uw.edu/?view=new&base=<?= $site_stem ?>">Create a group</a>
             </div>
             <?php
         }
