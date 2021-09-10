@@ -183,6 +183,17 @@ function add_user_roles( $user, $attributes ) {
             $user->remove_role($role);
         }
     }
+
+    $custom_attribute_attributes = array(
+        'uwStudentSystemKey' => 'urn:oid:1.2.840.113994.200.20',
+    );
+    foreach ($custom_attribute_attributes as $user_attr => $saml_attr) {
+        if (array_key_exists($saml_attr, $attributes)) {
+            update_user_meta($user->ID, $user_attr, $attributes[$saml_attr]);
+        } else {
+            delete_user_meta($user->ID, $user_attr);
+        }
+    }
 }
 add_action( 'wp_saml_auth_existing_user_authenticated', 'add_user_roles', 10, 2);
 add_action( 'wp_saml_auth_new_user_authenticated', 'add_user_roles', 10, 2);
