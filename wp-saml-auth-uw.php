@@ -208,6 +208,28 @@ function add_user_roles( $user, $attributes ) {
 add_action( 'wp_saml_auth_existing_user_authenticated', 'add_user_roles', 10, 2);
 add_action( 'wp_saml_auth_new_user_authenticated', 'add_user_roles', 10, 2);
 
+function custom_attribute_columns($users_columns)
+{
+    foreach (custom_user_attributes() as $meta_key => $user_attribute) {
+        $users_columns[$meta_key] = $user_attribute['display_name'];
+    }
+
+    return $users_columns;
+}
+add_filter("wpmu_users_columns", "custom_attribute_columns");
+
+function display_custom_attribute($output, $column_name, $uid)
+{
+    $custom_attributes = array_keys(custom_user_attributes());
+
+    if (!in_array($column_name, $custom_attributes)) {
+        return $output;
+    }
+
+    return get_user_meta($uid, $column_name, true);
+}
+add_filter("manage_users_custom_column", "display_custom_attribute", 10, 3);
+
 add_action( 'network_admin_menu', function() {
     add_submenu_page(
         'settings.php',
