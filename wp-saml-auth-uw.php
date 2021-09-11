@@ -174,7 +174,7 @@ function custom_user_attributes()
 /**
  * Add user to roles according to the groups given in attributes
  */
-function add_user_roles( $user, $attributes ) {
+function set_user_roles_and_attributes( $user, $attributes ) {
     $groups_attribute = 'urn:oid:1.3.6.1.4.1.5923.1.5.1.1';
     if (!($user_groups = $attributes[$groups_attribute])) {
         return;
@@ -205,8 +205,8 @@ function add_user_roles( $user, $attributes ) {
         }
     }
 }
-add_action( 'wp_saml_auth_existing_user_authenticated', 'add_user_roles', 10, 2);
-add_action( 'wp_saml_auth_new_user_authenticated', 'add_user_roles', 10, 2);
+add_action( 'wp_saml_auth_existing_user_authenticated', 'set_user_roles_and_attributes', 10, 2);
+add_action( 'wp_saml_auth_new_user_authenticated', 'set_user_roles_and_attributes', 10, 2);
 
 function custom_attribute_columns($users_columns)
 {
