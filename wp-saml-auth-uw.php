@@ -237,6 +237,14 @@ add_action( 'network_admin_menu', function() {
                     <tr><th scope="row">Super Admin</th>
                     <td><input readonly="readonly" type="text" class="regular-text" value="<?= super_admin_group() ?>" /></td></tr>
                 </table>
+                <h2>Attribute Mapping</h2>
+                <p>Custom attributes will be added to users according to these SAML attributes:</p>
+                <table class="form-table" role="presentation">
+<?php foreach (custom_user_attributes() as $user_attribute): ?>
+                    <tr><th scope="row"><?= $user_attribute['display_name'] ?></th>
+                    <td><input readonly="readonly" type="text" class="regular-text" value="<?= $user_attribute['saml_attribute'] ?>" /></td></tr>
+<?php endforeach; ?>
+                </table>
             </div>
             <?php
         }
