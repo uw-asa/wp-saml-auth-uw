@@ -161,6 +161,16 @@ function super_admin_group() {
     return WP_SAML_AUTH_UW_GROUP_STEM.'_admin';
 }
 
+function custom_user_attributes()
+{
+    return array(
+        'uwStudentSystemKey' => array(
+            'display_name'   => 'uwStudentSystemKey',
+            'saml_attribute' => 'urn:oid:1.2.840.113994.200.20',
+        ),
+    );
+}
+
 /**
  * Add user to roles according to the groups given in attributes
  */
@@ -187,11 +197,11 @@ function add_user_roles( $user, $attributes ) {
     $custom_attribute_attributes = array(
         'uwStudentSystemKey' => 'urn:oid:1.2.840.113994.200.20',
     );
-    foreach ($custom_attribute_attributes as $user_attr => $saml_attr) {
-        if (array_key_exists($saml_attr, $attributes)) {
-            update_user_meta($user->ID, $user_attr, $attributes[$saml_attr]);
+    foreach (custom_user_attributes() as $meta_key => $user_attribute) {
+        if (array_key_exists($user_attribute['saml_attribute'], $attributes)) {
+            update_user_meta($user->ID, $meta_key, $attributes[$user_attribute['saml_attribute']]);
         } else {
-            delete_user_meta($user->ID, $user_attr);
+            delete_user_meta($user->ID, $meta_key);
         }
     }
 }
