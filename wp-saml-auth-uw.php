@@ -123,20 +123,21 @@ function site_acs_url($site = null) {
 }
 
 /**
- * reduce the site down to a single part, removing prefixes etc
+ * remove prefixes and suffixes from the site's domain
+ * usually just a single name, but if there are multiple,
+ * reverse them and replace dots with underscores.
+ * ex: emfinadmin.uw.edu => emfinadmin
+ *     kb.registrar.washington.edu => registrar_kb
  */
 function site_slug() {
     $domain = parse_url(site_url(), PHP_URL_HOST);
 
-    $parts = explode('.', $domain);
-    $site = array_shift($parts);
-    while (preg_match('/^(dev|test)$/', $site)) {
-        $site = array_shift($parts);
-    }
+    $domain = preg_replace('/^((dev|test|live)[.-])+/', '', $domain);
+    $domain = preg_replace('/\.(dev|test|live)\.cms.+$/', '', $domain);
+    $domain = preg_replace('/([.-]asa)?[.-](uw|washington)\.(edu|pantheonsite\.io)$/', '', $domain);
 
-    if (preg_match('/^\w+-(\w+)-asa-uw$/', $site, $matches)) {
-        $site = $matches[1];
-    }
+    $parts = explode('.', $domain);
+    $site = implode('_', array_reverse($parts));
 
     return $site;
 }
