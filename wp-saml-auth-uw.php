@@ -33,7 +33,7 @@ function wpsax_filter_option( $value, $option_name ) {
                     'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
                 ),
                 'x509cert' => @file_get_contents(WP_SAML_AUTH_UW_SP_CERT),
-                'privateKey' => @file_get_contents(WP_SAML_AUTH_UW_SP_CERT),
+                'privateKey' => @file_get_contents(WP_SAML_AUTH_UW_SP_KEY),
                 // 'x509certNew' => file_get_contents(ABSPATH . 'private/sp-new.crt'),
             ),
             'idp'          => array(
@@ -55,6 +55,11 @@ function wpsax_filter_option( $value, $option_name ) {
                 // Optional: Instead of using the x509 cert, you can specify the fingerprint and algorithm.
                 'certFingerprint' => '',
                 'certFingerprintAlgorithm' => '',
+            ),
+            'security'     => array(
+                // Indicates whether the <samlp:AuthnRequest> messages sent by this SP
+                // will be signed.  [Metadata of the SP will offer this info]
+                'authnRequestsSigned' => true,
             ),
         ),
         // Automatically provision users
