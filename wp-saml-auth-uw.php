@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP SAML Auth for UW
- * Version: 1.1.0
+ * Version: 1.1.1
  * Description: Autoconfiguration of Pantheon's wp-saml-auth plugin for use at the University of Washington
  * Author: Bradley Bell <bradleyb@uw.edu>
  * Author URI: https://asais.uw.edu
@@ -12,6 +12,9 @@
  */
 
 define('WP_SAML_AUTH_UW_GROUP_STEM', 'uw_asa_it_web');
+define('WP_SAML_AUTH_UW_SP_CERT', ABSPATH . 'private/sp.crt');
+define('WP_SAML_AUTH_UW_SP_KEY', ABSPATH . 'private/sp.key');
+define('WP_SAML_AUTH_UW_IDP_CERT', ABSPATH . 'private/uw-idp-md-cert.pem');
 
 function wpsax_filter_option( $value, $option_name ) {
     $defaults = array(
@@ -29,8 +32,8 @@ function wpsax_filter_option( $value, $option_name ) {
                     'url'  => site_acs_url(),
                     'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
                 ),
-                'x509cert' => file_get_contents(ABSPATH . 'private/sp.crt'),
-                'privateKey' => file_get_contents(ABSPATH . 'private/sp.key'),
+                'x509cert' => @file_get_contents(WP_SAML_AUTH_UW_SP_CERT),
+                'privateKey' => @file_get_contents(WP_SAML_AUTH_UW_SP_CERT),
                 // 'x509certNew' => file_get_contents(ABSPATH . 'private/sp-new.crt'),
             ),
             'idp'          => array(
@@ -48,7 +51,7 @@ function wpsax_filter_option( $value, $option_name ) {
                 ),
                 // Required: Contents of the IDP's public x509 certificate.
                 // Use file_get_contents() to load certificate contents into scope.
-                'x509cert' => file_get_contents(ABSPATH . 'private/uw-idp-md-cert.pem'),
+                'x509cert' => @file_get_contents(WP_SAML_AUTH_UW_IDP_CERT),
                 // Optional: Instead of using the x509 cert, you can specify the fingerprint and algorithm.
                 'certFingerprint' => '',
                 'certFingerprintAlgorithm' => '',
@@ -240,32 +243,93 @@ add_action( 'network_admin_menu', function() {
         'wp-saml-auth-uw-settings',
         function() {
             $config = apply_filters( 'wp_saml_auth_option', null, 'internal_config' );
-            $groups = site_role_groups();
             ?>
             <div class="wrap">
                 <h2><?php esc_html_e( 'WP SAML Auth UW Settings', 'wp-saml-auth-uw' ); ?></h2>
-                <h2>Service Provider Settings</h2>
-                <p>Ensure this metadata is present in the UW Service Provider Registry:</p>
+                <h2>Service Provider</h2>
+                <p>This service provider must be registered in the UW Service Provider Registry:</p>
                 <table class="form-table" role="presentation">
                     <tr><th scope="row">Entity Id</th>
-                        <td><input readonly="readonly" type="text" class="regular-text" value="<?= $config['sp']['entityId'] ?>" /></td></tr>
+                        <td><tt><?= $config['sp']['entityId'] ?></tt></td>
+                    </tr>
+                </table>
+                <h2>Service Provider Certificate</h2>
+<?php $cert = @file_get_contents(WP_SAML_AUTH_UW_SP_CERT); ?>
+<?php if ($cert === false): ?>
+                <p>Error: Certificate '<?= WP_SAML_AUTH_UW_SP_CERT ?>' could not be read.</p>
+<?php else: ?>
+                <?php  $cert_data = openssl_x509_parse($cert); ?>
+                <p>This certificate must be present in the above SP Registry entry</p>
+                <table role="presentation">
+<?php  foreach (array('subject', 'issuer') as $attr): ?>
+                    <tr><th scope="row"><?= $attr ?></th><td>
+                        <?= implode(', ', array_reverse(array_map(function ($k, $v) { return "{$k}={$v}"; }, array_keys($cert_data[$attr]), array_values($cert_data[$attr])))) ?>
+                    </td></tr>
+<?php  endforeach; ?>
+<?php  foreach (array('validFrom', 'validTo') as $attr): ?>
+                    <tr><th scope="row"><?= $attr ?></th><td>
+                        <?= date_create( '@' .  $cert_data["{$attr}_time_t"])->format('c') ?>
+                    </td></tr>
+<?php  endforeach; ?>
+                    <tr><td colspan="2">
+                        <textarea cols="70" rows="10" readonly="readonly"><?= $cert ?></textarea>
+                    </td></tr>
+                </table>
+<?php endif; ?>
+                <h2>Service Provider Private Key</h2>
+<?php $private_key = @file_get_contents(WP_SAML_AUTH_UW_SP_KEY); ?>
+<?php if ($private_key === false): ?>
+                <p>Error: Private key '<?= WP_SAML_AUTH_UW_SP_KEY ?>' could not be read.</p>
+<?php else: ?>
+<?php  if (!openssl_x509_check_private_key($cert, $private_key)): ?>
+                <p>Error: Private key '<?= WP_SAML_AUTH_UW_SP_KEY ?>' does not match certificate.</p>
+<?php  else: ?>
+                <p>Private key matches certificate.</p>
+<?php  endif; ?>
+<?php endif; ?>
+                <h2>Identity Provider Certificate</h2>
+<?php $cert = @file_get_contents(WP_SAML_AUTH_UW_IDP_CERT); ?>
+<?php if ($cert === false): ?>
+                <p>Error: Certificate '<?= WP_SAML_AUTH_UW_IDP_CERT ?>' could not be read.</p>
+<?php else: ?>
+                <?php  $cert_data = openssl_x509_parse($cert); ?>
+                <p>This certificate must match the current UW IdP Certificate</p>
+                <table role="presentation">
+<?php  foreach (array('subject', 'issuer') as $attr): ?>
+                    <tr><th scope="row"><?= $attr ?></th><td>
+                        <?= implode(', ', array_reverse(array_map(function ($k, $v) { return "{$k}={$v}"; }, array_keys($cert_data[$attr]), array_values($cert_data[$attr])))) ?>
+                    </td></tr>
+<?php  endforeach; ?>
+<?php  foreach (array('validFrom', 'validTo') as $attr): ?>
+                    <tr><th scope="row"><?= $attr ?></th><td>
+                        <?= date_create( '@' .  $cert_data["{$attr}_time_t"])->format('c') ?>
+                    </td></tr>
+<?php  endforeach; ?>
+                    <tr><td colspan="2">
+                        <textarea cols="70" rows="10" readonly="readonly"><?= $cert ?></textarea>
+                    </td></tr>
+                </table>
+<?php endif; ?>
+                <h2>Assertion Consumer Service URLs</h2>
+                <p>Each of these must be present, with the binding <tt>urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST</tt></p>
+                <table class="form-table" role="presentation">
 <?php foreach (get_sites('fields=ids') as $site_id): ?>
-                    <tr><th scope="row">Assertion Consumer Service URL</th>
-                        <td><input readonly="readonly" type="text" class="regular-text" value="<?= site_acs_url($site_id) ?>" /></td></tr>
+                    <tr><th scope="row">location</th>
+                        <td><tt><?= site_acs_url($site_id) ?></tt></td></tr>
 <?php endforeach; ?>
                 </table>
                 <h2>Role Mapping</h2>
                 <p>Roles are granted or revoked upon login, according to membership in these UW Groups:</p>
                 <table class="form-table" role="presentation">
                     <tr><th scope="row">Super Admin</th>
-                    <td><input readonly="readonly" type="text" class="regular-text" value="<?= super_admin_group() ?>" /></td></tr>
+                    <td><tt><?= super_admin_group() ?></tt></td></tr>
                 </table>
                 <h2>Attribute Mapping</h2>
                 <p>Custom attributes will be added to users according to these SAML attributes:</p>
                 <table class="form-table" role="presentation">
 <?php foreach (custom_user_attributes() as $user_attribute): ?>
                     <tr><th scope="row"><?= $user_attribute['display_name'] ?></th>
-                    <td><input readonly="readonly" type="text" class="regular-text" value="<?= $user_attribute['saml_attribute'] ?>" /></td></tr>
+                    <td><tt><?= $user_attribute['saml_attribute'] ?></tt></td></tr>
 <?php endforeach; ?>
                 </table>
             </div>
