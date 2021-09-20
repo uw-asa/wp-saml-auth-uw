@@ -243,6 +243,7 @@ add_action( 'network_admin_menu', function() {
         'wp-saml-auth-uw-settings',
         function() {
             $config = apply_filters( 'wp_saml_auth_option', null, 'internal_config' );
+            date_default_timezone_set('America/Los_Angeles');
             ?>
             <div class="wrap">
                 <h2><?php esc_html_e( 'WP SAML Auth UW Settings', 'wp-saml-auth-uw' ); ?></h2>
@@ -268,7 +269,7 @@ add_action( 'network_admin_menu', function() {
 <?php  endforeach; ?>
 <?php  foreach (array('validFrom', 'validTo') as $attr): ?>
                     <tr><th scope="row"><?= $attr ?></th><td>
-                        <?= date_create( '@' .  $cert_data["{$attr}_time_t"])->format('c') ?>
+                        <?= date('m/d/Y', $cert_data["{$attr}_time_t"]) ?>
                     </td></tr>
 <?php  endforeach; ?>
                     <tr><td colspan="2">
@@ -302,7 +303,7 @@ add_action( 'network_admin_menu', function() {
 <?php  endforeach; ?>
 <?php  foreach (array('validFrom', 'validTo') as $attr): ?>
                     <tr><th scope="row"><?= $attr ?></th><td>
-                        <?= date_create( '@' .  $cert_data["{$attr}_time_t"])->format('c') ?>
+                        <?= date('m/d/Y', $cert_data["{$attr}_time_t"]) ?>
                     </td></tr>
 <?php  endforeach; ?>
                     <tr><td colspan="2">
