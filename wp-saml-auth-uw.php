@@ -317,9 +317,7 @@ add_action( 'network_admin_menu', function() {
                 </table>
 <?php endif; ?>
                 <h2>Assertion Consumer Service URLs</h2>
-                <p>Add these to the SP Registry entry, with the binding <tt>urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST</tt><br />
-                    With signed SAML requests, they are probably unnecessary.
-                </p>
+                <p>Add these to the SP Registry entry, with the binding <tt>urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST</tt></p>
                 <table class="form-table" role="presentation">
 <?php foreach (get_sites('fields=ids') as $site_id): ?>
                     <tr><th scope="row">location</th>
