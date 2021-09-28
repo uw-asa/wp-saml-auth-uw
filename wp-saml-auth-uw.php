@@ -203,9 +203,6 @@ function set_user_roles_and_attributes( $user, $attributes ) {
         }
     }
 
-    $custom_attribute_attributes = array(
-        'uwStudentSystemKey' => 'urn:oid:1.2.840.113994.200.20',
-    );
     foreach (custom_user_attributes() as $meta_key => $user_attribute) {
         if (array_key_exists($user_attribute['saml_attribute'], $attributes)) {
             update_user_meta($user->ID, $meta_key, $attributes[$user_attribute['saml_attribute']]);
