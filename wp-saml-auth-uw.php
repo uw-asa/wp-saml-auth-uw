@@ -205,7 +205,11 @@ function set_user_roles_and_attributes( $user, $attributes ) {
 
     foreach (custom_user_attributes() as $meta_key => $user_attribute) {
         if (array_key_exists($user_attribute['saml_attribute'], $attributes)) {
-            update_user_meta($user->ID, $meta_key, $attributes[$user_attribute['saml_attribute']]);
+            if (is_array($attributes[$user_attribute['saml_attribute']])) {
+                update_user_meta($user->ID, $meta_key, $attributes[$user_attribute['saml_attribute']][0]);
+            } else {
+                update_user_meta($user->ID, $meta_key, $attributes[$user_attribute['saml_attribute']]);
+            }
         } else {
             delete_user_meta($user->ID, $meta_key);
         }
