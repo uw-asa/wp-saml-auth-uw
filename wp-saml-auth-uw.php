@@ -158,7 +158,15 @@ function site_role_groups() {
 
     $role_map = array();
     foreach (wp_roles()->role_names as $role => $name) {
-        $role_map[$role] = $site_stem.'_'.str_replace('_', '-', $role);
+        switch($role) {
+        case 'uw_affiliation_alumni':
+        case 'uw_affiliation_staff-employee':
+            $role_map[$role] = $role;
+            break;
+        default:
+            $role_map[$role] = $site_stem.'_'.str_replace('_', '-', $role);
+            break;
+        }
     }
     return $role_map;
 }
