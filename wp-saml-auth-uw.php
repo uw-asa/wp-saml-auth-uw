@@ -361,8 +361,6 @@ add_action( 'admin_menu', function() {
         'manage_options',
         'wp-saml-auth-uw-settings',
         function() {
-            $config = apply_filters( 'wp_saml_auth_option', null, 'internal_config' );
-            $site_stem = WP_SAML_AUTH_UW_GROUP_STEM.'_'.site_slug();
             $groups = site_role_groups();
             ?>
             <div class="wrap">
@@ -376,7 +374,6 @@ add_action( 'admin_menu', function() {
                     <td></td></tr>
 <?php endforeach; ?>
                 </table>
-                <a href="https://groups.uw.edu/?view=new&base=<?= $site_stem ?>">Create a group</a>
             </div>
             <?php
         }
