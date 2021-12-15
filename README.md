@@ -1,5 +1,5 @@
 # wp-saml-auth-uw
-Customization of pantheon-systems/wp-saml-auth to use multisite and assign roles by group without the need for configuration
+Customization of [pantheon-systems/wp-saml-auth](https://github.com/pantheon-systems/wp-saml-auth) to use multisite and assign roles by group without the need for configuration
 
 
 ## Certificates
