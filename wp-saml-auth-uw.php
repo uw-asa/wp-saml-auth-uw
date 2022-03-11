@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP SAML Auth for UW
- * Version: 1.1.1
+ * Version: 1.1.2
  * Description: Autoconfiguration of Pantheon's wp-saml-auth plugin for use in multi-site installations at the University of Washington
  * Author: Bradley Bell <bradleyb@uw.edu>
  * Author URI: https://asais.uw.edu
@@ -65,8 +65,8 @@ function wpsax_filter_option( $value, $option_name ) {
         // Automatically provision users
         'auto_provision'         => true,
         // Only show login form if parameter is set
-        'permit_wp_login'        => ($_GET['saml_sso'] === 'false' ||
-                                     $_POST['saml_sso'] === 'false' ? true : false),
+        'permit_wp_login'        => ((!empty($_GET['saml_sso']) && $_GET['saml_sso'] === 'false') ||
+                                     (!empty($_POST['saml_ssl']) && $_POST['saml_sso'] === 'false') ? true : false),
         // Map users by login
         'get_user_by'            => 'login',
         // aka 'uid', aka 'uwNetID'
