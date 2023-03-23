@@ -66,7 +66,7 @@ function wpsax_filter_option( $value, $option_name ) {
         'auto_provision'         => true,
         // Only show login form if parameter is set
         'permit_wp_login'        => ((!empty($_GET['saml_sso']) && $_GET['saml_sso'] === 'false') ||
-                                     (!empty($_POST['saml_ssl']) && $_POST['saml_sso'] === 'false') ? true : false),
+                                     (!empty($_POST['saml_sso']) && $_POST['saml_sso'] === 'false') ? true : false),
         // Map users by login
         'get_user_by'            => 'login',
         // aka 'uid', aka 'uwNetID'
