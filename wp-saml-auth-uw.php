@@ -384,3 +384,18 @@ add_action( 'admin_menu', function() {
         }
     );
 });
+
+
+/**
+ * Update user attributes after a user has logged in via SAML.
+ */
+add_action( 'wp_saml_auth_existing_user_authenticated', function( $existing_user, $attributes ) {
+    $user_args = array(
+        'ID' => $existing_user->ID,
+    );
+    foreach ( array( 'display_name', 'first_name', 'last_name' ) as $type ) {
+        $attribute          = \WP_SAML_Auth::get_option( "{$type}_attribute" );
+        $user_args[ $type ] = ! empty( $attributes[ $attribute ][0] ) ? $attributes[ $attribute ][0] : '';
+    }
+    wp_update_user( $user_args );
+}, 10, 2 );
