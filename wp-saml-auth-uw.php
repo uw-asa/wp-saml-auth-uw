@@ -90,7 +90,8 @@ function wpsax_filter_option( $value, $option_name ) {
 add_filter( 'wp_saml_auth_option', 'wpsax_filter_option', 10, 2 );
 
 add_action( 'login_form', function() {
-    if ( $_GET['saml_sso'] === 'false' || $_POST['saml_sso'] === 'false' ) {
+    if ( isset($_GET['saml_sso']) && $_GET['saml_sso'] === 'false' ||
+         isset($_POST['saml_sso']) && $_POST['saml_sso'] === 'false' ) {
         ?><input type="hidden" name="saml_sso" value="false" /><?php
     }
 });
