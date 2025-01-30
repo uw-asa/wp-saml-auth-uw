@@ -186,6 +186,10 @@ function custom_user_attributes()
             'display_name'   => 'uwStudentSystemKey',
             'saml_attribute' => 'urn:oid:1.2.840.113994.200.20',
         ),
+        'uwStudentID'        => array(
+            'display_name'   => 'uwStudentID',
+            'saml_attribute' => 'urn:oid:1.2.840.113994.200.21',
+        )
     );
 }
 
