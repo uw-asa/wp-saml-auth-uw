@@ -69,16 +69,18 @@ function wpsax_filter_option( $value, $option_name ) {
                                      (!empty($_POST['saml_sso']) && $_POST['saml_sso'] === 'false') ? true : false),
         // Map users by login
         'get_user_by'            => 'login',
-        // aka 'uid', aka 'uwNetID'
-        'user_login_attribute'   => 'urn:oid:0.9.2342.19200300.100.1.1',
-        // aka 'mail', aka 'email'
-        'user_email_attribute'   => 'urn:oid:0.9.2342.19200300.100.1.3',
-        // aka 'cn'
-        'display_name_attribute' => 'urn:oid:2.5.4.3',
-        // aka 'givenName'
-        'first_name_attribute'   => 'urn:oid:2.5.4.42',
-        // aka 'surname'
-        'last_name_attribute'    => 'urn:oid:2.5.4.4',
+
+        /**
+         * Guide to UW attributes
+         * https://uwconnect.uw.edu/it?id=kb_article_view&sys_kb_id=62ef88ad93d2921086a27b847aba107a
+         */
+        'user_login_attribute'   => 'urn:oid:0.9.2342.19200300.100.1.1',    // uwNetID, uid
+        'user_email_attribute'   => 'urn:oid:0.9.2342.19200300.100.1.3',    // email, mail
+        'display_name_attribute' => 'urn:oid:2.5.4.3',                      // cn
+        // 'first_name_attribute'   => 'urn:oid:2.5.4.42',                     // givenName
+        'first_name_attribute'   => 'urn:oid:1.2.840.113994.200.47',        // preferredFirst
+        // 'last_name_attribute'    => 'urn:oid:2.5.4.4',                      // surname
+        'last_name_attribute'    => 'urn:oid:1.2.840.113994.200.49',        // preferredSurname
         // No default role. Will be added after creation
         'default_role'           => '',
     );
