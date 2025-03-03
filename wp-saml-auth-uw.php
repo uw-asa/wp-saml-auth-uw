@@ -334,11 +334,17 @@ add_action( 'network_admin_menu', function() {
                 </table>
 <?php endif; ?>
                 <h2>Assertion Consumer Service URLs</h2>
-                <p>Add these to the SP Registry entry, with the binding <tt>urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST</tt></p>
                 <table class="form-table" role="presentation">
 <?php foreach (get_sites('fields=ids') as $site_id): ?>
-                    <tr><th scope="row">location</th>
-                        <td><tt><?= site_acs_url($site_id) ?></tt></td></tr>
+                  <tbody>
+                    <tr><th scope="row" style="padding: 0px">index</th>
+                        <td style="padding: 0px"><tt><?= $site_id ?></tt></td></tr>
+                    <tr><th scope="row" style="padding: 0px">binding</th>
+                        <td style="padding: 0px"><tt>urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST</tt></td></tr>
+                    <tr><th scope="row" style="padding: 0px">location</th>
+                        <td style="padding: 0px"><tt><?= site_acs_url($site_id) ?></tt></td></tr>
+                    <tr><td></td><td></td></tr>
+                  </tbody>
 <?php endforeach; ?>
                 </table>
                 <h2>Role Mapping</h2>
