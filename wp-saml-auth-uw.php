@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP SAML Auth for UW
- * Version: 1.1.3
+ * Version: 1.1.4
  * Description: Autoconfiguration of Pantheon's wp-saml-auth plugin for use in multi-site installations at the University of Washington
  * Author: Bradley Bell <bradleyb@uw.edu>
  * Author URI: https://asais.uw.edu
@@ -402,7 +402,7 @@ add_action( 'wp_saml_auth_existing_user_authenticated', function( $existing_user
     $user_args = array(
         'ID' => $existing_user->ID,
     );
-    foreach ( array( 'display_name', 'first_name', 'last_name' ) as $type ) {
+    foreach ( array( 'first_name', 'last_name' ) as $type ) {
         $attribute          = \WP_SAML_Auth::get_option( "{$type}_attribute" );
         $user_args[ $type ] = ! empty( $attributes[ $attribute ][0] ) ? $attributes[ $attribute ][0] : '';
     }
